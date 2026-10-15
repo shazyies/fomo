@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="biru-pastel">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LESS FOMO - Is it what you want, or just FOMO?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ===== 1. TEMA (semua warna lewat variabel) ===== */
+:root{--bg:#f0f7ff;--card:#fff;--line:#d0e3ff;--text:#1e293b;--sub:#64748b;--accent:#3b82f6;--accent-2:#0ea5e9;--tint:rgba(14,165,233,.12);--nav:#fff;--empty:#e2e8f0;--shadow:0 10px 25px -5px rgba(59,130,246,.08);--ok:#10b981;--warn:#f59e0b;--bad:#ef4444}
+[data-theme=hijau-pastel]{--bg:#f0fdf4;--line:#bbf7d0;--text:#14532d;--sub:#475569;--accent:#10b981;--accent-2:#059669;--tint:rgba(16,185,129,.12);--shadow:0 10px 25px -5px rgba(16,185,129,.08)}
+[data-theme=kuning-pastel]{--bg:#fefce8;--line:#fef08a;--text:#713f12;--sub:#78716c;--accent:#eab308;--accent-2:#d97706;--tint:rgba(234,179,8,.15);--empty:#f3f4f6;--shadow:0 10px 25px -5px rgba(234,179,8,.08)}
+[data-theme=biru-dark]{color-scheme:dark;--bg:#0f172a;--card:#1e293b;--line:#334155;--text:#f8fafc;--sub:#94a3b8;--accent:#38bdf8;--accent-2:#818cf8;--tint:rgba(56,189,248,.15);--nav:#0f172a;--empty:#334155;--shadow:0 10px 25px -5px rgba(0,0,0,.3)}
+[data-theme=gradasi-pastel]{--bg:linear-gradient(135deg,#fce7f3,#e0e7ff 50%,#f0fdf4);--card:rgba(255,255,255,.85);--line:#fbcfe8;--text:#374151;--sub:#6b7280;--accent:#ec4899;--accent-2:#8b5cf6;--tint:rgba(236,72,153,.12);--nav:rgba(255,255,255,.9);--empty:#e5e7eb;--shadow:0 10px 25px -5px rgba(236,72,153,.1)}
+[data-theme=gradasi-dark]{color-scheme:dark;--bg:linear-gradient(135deg,#111827,#1e1b4b 50%,#064e3b);--card:rgba(31,41,55,.85);--line:#374151;--text:#f9fafb;--sub:#9ca3af;--accent:#a855f7;--accent-2:#34d399;--tint:rgba(168,85,247,.2);--nav:rgba(17,24,39,.95);--empty:#374151;--shadow:0 10px 25px -5px rgba(0,0,0,.4)}
+
+/* ===== 2. DASAR ===== */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font:15px/1.5 'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg) fixed;color:var(--text);display:flex;justify-content:center;min-height:100vh;padding-bottom:90px}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+.app{width:100%;max-width:480px;padding:20px 16px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.muted{color:var(--sub)}
+.small{font-size:.8rem}
+.center{text-align:center}
+.mt{margin-top:12px}
+.title{font-size:1.1rem;font-weight:800;margin-bottom:12px}
+
+/* ===== 3. KOMPONEN UMUM ===== */
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;margin-bottom:20px;box-shadow:var(--shadow);backdrop-filter:blur(10px)}
+.field{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px}
+.btn{flex:1;padding:12px;border-radius:12px;border:0;font-size:.88rem;font-weight:700;text-align:center}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{opacity:.9}
+.btn-secondary{background:transparent;border:1px solid var(--line);color:var(--text)}
+.btn-danger{color:var(--bad)}
+.btn-block{width:100%;margin-top:10px}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:.78rem;font-weight:600}
+.icon-btn{background:none;border:0;color:var(--sub)}
+.actions{display:flex;gap:10px;margin-top:16px}
+
+/* ===== 4. HEADER & HERO ===== */
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.logo{font-weight:800;font-size:1.15rem;color:var(--accent)}
+.theme-select{border-radius:20px;font-size:.8rem;font-weight:700}
+.hero{margin-bottom:24px}
+.hero small{display:block;font-size:.85rem;font-weight:700;color:var(--sub);margin-bottom:6px}
+.hero h1{font-size:1.75rem;font-weight:800;line-height:1.25;margin-bottom:10px}
+.hero p{font-size:.9rem;color:var(--sub)}
+
+/* ===== 5. DASHBOARD ===== */
+.stats{display:flex;align-items:center;gap:20px;margin:16px 0 20px}
+.ring{position:relative;width:80px;height:80px;display:grid;place-items:center;flex:none}
+.ring svg{position:absolute;inset:0;width:80px;height:80px;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:8;stroke-linecap:round}
+.ring .bg{stroke:var(--empty)}
+.ring .val{stroke:var(--accent-2);stroke-dasharray:220;stroke-dashoffset:220;transition:stroke-dashoffset .5s}
+.ring b{font-size:1.1rem;font-weight:800}
+.bars{display:flex;justify-content:space-between;align-items:flex-end;height:120px;padding:10px 0;margin-bottom:12px;border-bottom:1px solid var(--line)}
+.bar{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;font-size:.72rem;font-weight:700;color:var(--sub)}
+.bar-track{width:28px;height:80px;background:var(--empty);border-radius:6px;display:flex;align-items:flex-end;overflow:hidden}
+.bar-fill{width:100%;background:linear-gradient(to top,var(--accent),var(--accent-2));border-radius:6px;transition:height .4s}
+
+/* ===== 6. PANDUAN (details) ===== */
+.guide{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.guide summary{padding:14px 16px;font-weight:700;font-size:.92rem;cursor:pointer;list-style:none;display:flex;justify-content:space-between}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary::after{content:"+";color:var(--accent)}
+.guide[open] summary::after{content:"−"}
+.guide .body{padding:16px;font-size:.85rem;color:var(--sub);line-height:1.6;border-top:1px solid var(--line)}
+.guide h4{color:var(--text);font-size:.88rem;margin-bottom:6px}
+.guide ul{list-style:none}
+.guide li{position:relative;padding-left:18px;margin-bottom:8px}
+.guide li::before{content:"•";position:absolute;left:4px;color:var(--accent);font-weight:700}
+
+/* ===== 7. TANTANGAN ===== */
+.days{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:16px}
+.day{background:var(--card);border:1px solid var(--line);color:var(--sub);padding:8px 14px;border-radius:10px;font-weight:700;white-space:nowrap}
+.day.active{background:var(--accent-2);border-color:var(--accent-2);color:#fff}
+.mission{background:var(--tint);border-left:4px solid var(--accent);padding:12px 16px;border-radius:8px;margin-bottom:16px}
+.mission b{display:block;font-size:.75rem;color:var(--accent);margin-bottom:4px}
+.mission p{font-size:.88rem;font-weight:600}
+.task{display:flex;gap:12px;width:100%;text-align:left;background:none;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+.task.done{border-color:var(--accent-2);background:var(--tint)}
+.check{width:22px;height:22px;flex:none;margin-top:2px;border:2px solid var(--sub);border-radius:6px;display:grid;place-items:center;font-size:.8rem}
+.task.done .check{background:var(--accent-2);border-color:var(--accent-2);color:#fff}
+.task h4{font-size:.95rem;margin-bottom:4px}
+.task p{font-size:.8rem;color:var(--sub);line-height:1.35}
+
+/* ===== 8. TES FOMO ===== */
+.q{margin-bottom:18px}
+.q label{display:block;font-size:.88rem;font-weight:600;margin-bottom:8px}
+.q select{width:100%;padding:10px}
+.pie{width:140px;height:140px;border-radius:50%;display:grid;place-items:center;margin:16px auto 14px;background:conic-gradient(var(--accent) 0 0%,var(--empty) 0 100%)}
+.pie div{width:95px;height:95px;border-radius:50%;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.pie b{font-size:1.4rem}
+.pie span{font-size:.75rem;font-weight:700}
+.advice{background:var(--tint);border-radius:12px;padding:14px;font-size:.85rem}
+
+/* ===== 9. PENGINGAT & KUTIPAN ===== */
+.quote{padding:20px 10px}
+.quote p{font-size:1.05rem;font-weight:700;font-style:italic;line-height:1.4;margin-bottom:16px}
+.quote .actions{justify-content:center;gap:8px;margin:0}
+.list-item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--line);font-size:.88rem}
+.form{display:flex;gap:8px;margin-top:14px}
+.form input[type=text]{flex:1;min-width:0}
+
+/* ===== 10. GAME & AUDIO ===== */
+.hud{font-size:.85rem;font-weight:700}
+canvas{display:block;width:100%;height:200px;margin-top:10px;background:rgba(0,0,0,.03);border:1px solid var(--line);border-radius:12px;touch-action:none}
+.sounds{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.sound{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:.8rem;font-weight:700}
+.sound.active{border-color:var(--accent-2);background:var(--tint);color:var(--accent)}
+
+/* ===== 11. NAVIGASI BAWAH ===== */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--nav);border-top:1px solid var(--line);display:flex;padding:8px 0;z-index:10;box-shadow:0 -4px 20px rgba(0,0,0,.05)}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:0;color:var(--sub);font-size:.72rem;font-weight:700}
+.nav-item i{font-style:normal;font-size:1.3rem;filter:grayscale(1);opacity:.7}
+.nav-item.active{color:var(--accent)}
+.nav-item.active i{filter:none;opacity:1}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header class="top">
+  <div class="logo">☁️ LESS FOMO</div>
+  <select class="field theme-select" id="themeSelect" aria-label="Pilih tema">
+    <option value="biru-pastel">Soft Cyan / Ice Blue</option>
+    <option value="hijau-pastel">Soft Sage &amp; Mint</option>
+    <option value="kuning-pastel">Soft Sunburst Butter</option>
+    <option value="biru-dark">Deep Navy Midnight Blue</option>
+    <option value="gradasi-pastel">Soft Sunset Gradient Lavender-Pink</option>
+    <option value="gradasi-dark">Deep Neon Cyan Gradient</option>
+  </select>
+</header>
+
+<section class="hero">
+  <small>Jeda dulu, pilih yang berarti</small>
+  <h1>Is it what you want, or just FOMO?</h1>
+  <p>Tidak perlu sempurna. Fokus pada langkah kecil yang realistis untuk mengambil kembali kendali atas waktu dan pilihanmu.</p>
+</section>
+
+<main>
+<!-- DASHBOARD -->
+<div class="tab" id="tab-dashboard">
+  <section class="card">
+    <div class="row"><div><div class="small muted">Progres mingguan</div><h2>Grafik 7 hari</h2></div><span>📈</span></div>
+    <div class="stats">
+      <div class="ring">
+        <svg viewBox="0 0 80 80" aria-hidden="true"><circle class="bg" cx="40" cy="40" r="35"/><circle class="val" id="ringVal" cx="40" cy="40" r="35"/></svg>
+        <b id="pct">0%</b>
+      </div>
+      <div><b id="daysDone">0 dari 7 hari selesai</b><div class="small muted" id="tasksDone">0 dari 21 tugas selesai</div></div>
+    </div>
+    <div class="bars" id="bars"></div>
+    <p class="small muted">Grafik menunjukkan jumlah tugas yang dicentang dari tiga tugas per hari. Teruskan dengan ritme yang nyaman!</p>
+  </section>
+
+  <section class="card">
+    <h3 class="title">📖 Panduan Memahami FOMO</h3>
+    <details class="guide"><summary>1. Apa Itu FOMO?</summary><div class="body"><p>FOMO (<i>Fear of Missing Out</i>) adalah perasaan cemas, gelisah, atau takut tertinggal yang timbul saat melihat orang lain menikmati momen seru, mengikuti tren baru, atau meraih pencapaian yang tidak kita ikuti, umumnya dipicu paparan konten media sosial yang terus-menerus menampilkan momen terbaik hidup orang lain.</p></div></details>
+    <details class="guide"><summary>2. Faktor Penyebab FOMO</summary><div class="body"><h4>Pemicu utama</h4><ul>
+      <li><b>Penggunaan medsos berlebih:</b> terlalu sering scrolling tanpa tujuan.</li>
+      <li><b>Kebutuhan validasi sosial:</b> ingin selalu diakui dan diterima kelompok.</li>
+      <li><b>Takut terisolasi (kudet):</b> cemas dianggap tidak gaul jika tidak tahu tren viral.</li>
+      <li><b>Membandingkan diri:</b> mengukur kebahagiaan dengan pencapaian orang lain.</li></ul></div></details>
+    <details class="guide"><summary>3. Dampak Buruk FOMO</summary><div class="body"><h4>Efek negatif yang perlu diwaspadai</h4><ul>
+      <li><b>Kesehatan mental:</b> cemas berlebih, lelah mental, dan rasa tidak cukup.</li>
+      <li><b>Kualitas tidur berkurang:</b> scrolling hingga larut malam.</li>
+      <li><b>Masalah keuangan:</b> boros demi membeli barang viral.</li>
+      <li><b>Produktivitas terganggu:</b> waktu dan energi habis memikirkan urusan orang lain.</li></ul></div></details>
+    <details class="guide"><summary>4. Cara Efektif Mengatasinya</summary><div class="body"><h4>Langkah nyata menuju JOMO</h4><ul>
+      <li><b>Aturan jeda 24 jam:</b> tunda pembelian barang viral selama 1 hari.</li>
+      <li><b>Kurasi akun medsos:</b> unfollow atau mute akun yang bikin kamu minder.</li>
+      <li><b>Jurnal rasa syukur:</b> catat 3 hal kecil yang kamu syukuri tiap hari.</li>
+      <li><b>Hadir di dunia nyata:</b> nikmati momen tanpa sibuk upload story.</li></ul></div></details>
+  </section>
+</div>
+
+<!-- TANTANGAN -->
+<div class="tab" id="tab-tantangan" hidden>
+  <div class="days" id="days"></div>
+  <section class="card">
+    <h2 class="title" id="dayTitle"></h2>
+    <div class="mission"><b id="dayTag"></b><p id="dayMission"></p></div>
+    <div id="tasks"></div>
+    <p class="small muted" id="daySummary"></p>
+    <div class="actions">
+      <button class="btn btn-primary" id="completeDay">Selesaikan hari ini ✓</button>
+      <button class="btn btn-secondary" id="resetDay">Reset hari</button>
+    </div>
+  </section>
+</div>
+
+<!-- TES FOMO -->
+<div class="tab" id="tab-cek" hidden>
+  <section class="card">
+    <h3 class="title">📊 Tes Seberapa FOMO Kamu</h3>
+    <form id="survey"></form>
+    <button type="button" class="btn btn-primary btn-block" id="calc">Hitung Hasil FOMO</button>
+    <div id="result" class="center" hidden>
+      <div class="pie" id="pie"><div><b id="piePct">0%</b><span id="pieLevel"></span></div></div>
+      <h4 class="title">Skor FOMO Kamu</h4>
+      <div class="advice" id="advice"></div>
+    </div>
+  </section>
+</div>
+
+<!-- PENGINGAT -->
+<div class="tab" id="tab-pengingat" hidden>
+  <div class="center">
+    <h2>A gentle reminder for you.</h2>
+    <p class="small muted mt">Ganti kutipan kapan pun kamu butuh pengingat kecil, simpan favoritmu, dan atur pengingat tugas harian.</p>
+  </div>
+  <section class="card quote center mt">
+    <p id="quote"></p>
+    <div class="actions">
+      <button class="chip" id="saveQuote">❤️ Simpan</button>
+      <button class="chip" id="copyQuote">📋 Salin</button>
+      <button class="chip" id="nextQuote">Ganti kutipan ↺</button>
+    </div>
+  </section>
+  <section class="card">
+    <div class="row"><div><div class="small muted">Pengingat harian</div><h3>Atur Jadwal Pengingat</h3></div><span>⏰</span></div>
+    <div id="reminders"></div>
+    <div class="form">
+      <input class="field" type="time" id="remTime" value="20:00" aria-label="Jam pengingat">
+      <input class="field" type="text" id="remLabel" placeholder="Nama pengingat (mis: Waktu Rehat)" aria-label="Nama pengingat">
+      <button class="btn btn-primary" id="addRem" aria-label="Tambah pengingat">+</button>
+    </div>
+  </section>
+  <section class="card"><h3 class="title">Kutipan favorit</h3><div id="favorites"></div></section>
+</div>
+
+<!-- GAME & AUDIO -->
+<div class="tab" id="tab-game" hidden>
+  <section class="card">
+    <div class="row"><h3>🎮 Game 1: Mindful Catch</h3><div class="hud">Nyawa: <span id="catchLives">❤️❤️❤️❤️❤️</span> | Skor: <span id="catchScore">0</span></div></div>
+    <p class="small muted mt">Tangkap ⭐ bintang (+10 skor) dan hindari 📱 medsos (nyawa −1). Geser untuk menggerakkan keranjang.</p>
+    <button class="btn btn-primary btn-block" id="playCatch">Main Catch 🚀</button>
+    <canvas id="catchCanvas"></canvas>
+  </section>
+  <section class="card">
+    <div class="row"><h3>🏃 Game 2: Anti-FOMO Runner</h3><div class="hud">Nyawa: <span id="runLives">❤️❤️❤️❤️❤️</span> | Skor: <span id="runScore">0</span></div></div>
+    <p class="small muted mt">Lompati rintangan barang FOMO (📱 🛍️ 🍔). Ketuk layar atau tekan Spasi untuk melompat.</p>
+    <button class="btn btn-primary btn-block" id="playRun">Main Runner 🚀</button>
+    <canvas id="runnerCanvas"></canvas>
+  </section>
+  <section class="card">
+    <h3 class="title">🎧 6 Suara Relaksasi &amp; Penenang</h3>
+    <p class="small muted">Pilih ketenangan alami untuk melepas stres dan FOMO:</p>
+    <div class="sounds" id="sounds"></div>
+    <button class="btn btn-secondary btn-danger btn-block" id="stopSound">⏹️ Matikan Semua Suara</button>
+  </section>
+</div>
+</main>
+
+<nav class="nav" aria-label="Menu utama">
+  <button class="nav-item active" data-tab="dashboard"><i>📊</i>Dashboard</button>
+  <button class="nav-item" data-tab="cek"><i>🧠</i>Cek</button>
+  <button class="nav-item" data-tab="tantangan"><i>🌱</i>Tantangan</button>
+  <button class="nav-item" data-tab="pengingat"><i>🔔</i>Pengingat</button>
+  <button class="nav-item" data-tab="game"><i>🎮</i>Fun Games</button>
+</nav>
+</div>
+
+<script>
+/* ===== DATA ===== */
+const DAYS = [
+  ["Sadari pemicu", "Kenali kapan dan mengapa kamu merasa harus mengikuti tren.", [["Amati satu momen saat kamu merasa FOMO.", "Catat situasi yang memicu keinginan ikut-ikutan."], ["Tulis apa yang kamu rasakan saat melihat tren.", "Cukup sadari perasaanmu tanpa menghakimi."], ["Tunda mengecek media sosial selama 15 menit.", "Amati apakah dorongan untuk mengecek berubah."]]],
+  ["Jeda sebelum membeli", "Beri ruang sebelum memutuskan membeli sesuatu yang sedang ramai.", [["Pilih satu barang yang sedang kamu inginkan.", "Tidak perlu langsung memutuskan."], ["Tanyakan: apakah aku butuh, ingin, atau terpengaruh?", "Tulis satu alasan yang paling jujur."], ["Tunda pembelian non-darurat selama 24 jam.", "Lihat apakah kamu masih menginginkannya besok."]]],
+  ["Kurangi perbandingan", "Ingat bahwa media sosial hanya menunjukkan sebagian dari kehidupan orang lain.", [["Mute atau istirahat dari satu akun pemicu perbandingan.", "Kamu boleh mengatur konten yang kamu lihat."], ["Tulis tiga hal yang kamu hargai dari dirimu atau harimu.", "Arahkan perhatian ke hidupmu sendiri."], ["Hindari membandingkan barang yang kamu punya dengan orang lain.", "Fokus pada fungsi dan kebutuhanmu."]]],
+  ["Pilih trenmu sendiri", "Kamu boleh mengikuti tren yang kamu suka dan melewatkan yang tidak cocok.", [["Pilih satu tren yang benar-benar sesuai minatmu.", "Pastikan kamu tertarik bukan hanya karena ramai."], ["Lewati satu tren yang tidak sesuai kebutuhanmu.", "Kamu tidak harus mengikuti semuanya."], ["Tanyakan apakah kamu tetap memilihnya tanpa tekanan teman.", "Jadikan nilai dan minatmu sebagai panduan."]]],
+  ["Hadir di dunia nyata", "Beri perhatian pada kegiatan dan orang di sekitarmu.", [["Lakukan hobi selama 20 menit tanpa membuka media sosial.", "Nikmati aktivitas tanpa perlu mengunggahnya."], ["Ngobrol langsung dengan teman atau keluarga.", "Coba hadir sepenuhnya dalam percakapan."], ["Luangkan waktu makan atau istirahat tanpa scrolling.", "Perhatikan apa yang kamu rasakan."]]],
+  ["Kenali prioritas", "Waktu, energi, dan uangmu terbatas. Pilih hal yang paling berarti.", [["Tulis tiga prioritasmu minggu ini.", "Gunakan sebagai panduan memilih kegiatan."], ["Periksa anggaran sebelum mempertimbangkan pembelian.", "Pastikan kebutuhan penting tetap terpenuhi."], ["Latih berkata “tidak dulu” pada satu hal yang tidak cocok.", "Menolak satu hal bukan berarti kehilangan segalanya."]]],
+  ["Rayakan progres", "Lihat apa yang kamu pelajari dan pilih kebiasaan untuk dilanjutkan.", [["Lihat kembali tugas yang sudah kamu selesaikan.", "Apresiasi usaha sekecil apa pun."], ["Tuliskan satu hal yang kamu pelajari tentang FOMO.", "Apa yang ingin kamu lakukan berbeda?"], ["Pilih satu kebiasaan yang akan kamu lanjutkan minggu depan.", "Mulai dari target yang realistis dan ramah pada diri sendiri."]]]
+];
+
+const QUOTES = [
+  "Kamu tidak harus memiliki semua yang sedang ramai dibicarakan.",
+  "Boleh tertarik pada tren, tetap pilih berdasarkan kebutuhanmu.",
+  "Gak semua hal viral harus kamu cobain. Hidup tenang itu juga tren kok!",
+  "Dompet aman, pikiran tenang. JOMO (Joy of Missing Out) itu nikmat banget!",
+  "Social media cuma tempat pamer highlight reel, bukan realita 24/7 mereka.",
+  "Nggak usah buru-buru, kamu nggak ketinggalan apa-apa kok. Jalani ritmemu sendiri.",
+  "Istirahat dari medsos sebentar gak akan bikin kamu kehilangan dunia.",
+  "Beli barang karena butuh, bukan karena pengen keliatan keren di story.",
+  "Fokus ke versi terbaik dirimu, bukan sibuk ngeliatin pencapaian orang lain.",
+  "Rehat sejenak dari scroll medsos. Dunia nyata di sekitarmu jauh lebih seru!",
+  "Punya sedikit barang tapi kepake semua jauh lebih adem daripada ikutan tren mulu.",
+  "Belajar bilang 'nggak dulu' itu bentuk paling keren dari self-love.",
+  "Kebahagiaanmu itu kamu yang nentukan, bukan likes atau komentar netizen.",
+  "Gak usah merasa tertinggal, tiap orang punya garis start dan finish masing-masing.",
+  "Lagi gak ngikutin tren yang viral? Selamat, kamu punya pendirian kuat!"
+];
+
+const SURVEY = [
+  ["Seberapa sering kamu mengecek medsos langsung saat bangun tidur?", "Jarang / Hampir tidak pernah", "Kadang-kadang", "Sangat sering / Selalu"],
+  ["Merasa cemas jika tidak tahu tren terbaru yang lagi viral?", "Tidak cemas sama sekali", "Agak cemas", "Sangat cemas & merasa tertinggal"],
+  ["Membeli barang/makanan populer hanya karena ramai di internet?", "Sangat jarang / Sesuai kebutuhan", "Pernah beberapa kali", "Sering ikut-ikutan"],
+  ["Merasa iri melihat unggahan kegiatan teman di medsos?", "Hampir tidak pernah", "Kadang-kadang", "Sangat sering merasa iri"],
+  ["Kesulitan menikmati momen tanpa mengunggahnya ke medsos?", "Bisa menikmati momen tanpa hp", "Kadang harus dokumentasi", "Wajib upload dulu baru puas"]
+];
+
+const SOUNDS = [["birds", "🐦 Kicauan Burung"], ["waves", "🌊 Ombak Laut"], ["wind", "🍃 Angin Sungai"], ["crickets", "🦗 Hutan Jangkrik"], ["egypt", "🪕 Musik Mesir"], ["bell", "🔔 Lonceng Zen"]];
+
+/* ===== UTIL ===== */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const load = (key, fallback) => { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } };
+const save = (key, value) => localStorage.setItem(key, JSON.stringify(value));
+const cssVar = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+const hearts = n => "❤️".repeat(n) + "🖤".repeat(5 - n);
+
+/* ===== STATE (kunci localStorage tetap sama dengan versi lama) ===== */
+let day = 1;
+const progress = Object.assign(Object.fromEntries(DAYS.map((_, i) => [i + 1, [false, false, false]])), load("lessfomo_progress", {}));
+const favorites = load("lessfomo_quotes", [QUOTES[0]]).map(q => q.replace(/^"|"$/g, ""));
+let reminders = load("lessfomo_reminders", [{ id: 1, time: "20:00", label: "Waktu Rehat", active: true }]);
+
+/* ===== TEMA & NAVIGASI ===== */
+$("#themeSelect").onchange = e => { document.documentElement.dataset.theme = e.target.value; };
+
+function showTab(id) {
+  $$(".tab").forEach(t => { t.hidden = t.id !== "tab-" + id; });
+  $$(".nav-item").forEach(b => {
+    const on = b.dataset.tab === id;
+    b.classList.toggle("active", on);
+    b.setAttribute("aria-current", on ? "page" : "false");
+  });
+  if (id !== "game") { stopCatch(); stopRun(); }
+}
+$$(".nav-item").forEach(b => b.onclick = () => showTab(b.dataset.tab));
+
+/* ===== TANTANGAN 7 HARI ===== */
+function renderDays() {
+  $("#days").innerHTML = DAYS.map((_, i) => `<button class="day ${i + 1 === day ? "active" : ""}" data-day="${i + 1}">H${i + 1}</button>`).join("");
+}
+
+function renderDay() {
+  const [name, mission, tasks] = DAYS[day - 1], state = progress[day];
+  $("#dayTitle").textContent = `Hari ${day} — ${name}`;
+  $("#dayTag").textContent = `DAY ${day} MISSION`;
+  $("#dayMission").textContent = mission;
+  $("#tasks").innerHTML = tasks.map(([t, d], i) =>
+    `<button class="task ${state[i] ? "done" : ""}" data-task="${i}"><span class="check">${state[i] ? "✓" : ""}</span><span><h4>${t}</h4><p>${d}</p></span></button>`).join("");
+  $("#daySummary").textContent = `${state.filter(Boolean).length} dari 3 tugas selesai hari ini.`;
+}
+
+function setDay(values) { progress[day] = values; save("lessfomo_progress", progress); renderDay(); renderDashboard(); }
+
+$("#days").onclick = e => { const b = e.target.closest("[data-day]"); if (b) { day = +b.dataset.day; renderDays(); renderDay(); } };
+$("#tasks").onclick = e => { const b = e.target.closest("[data-task]"); if (b) { const s = [...progress[day]]; s[+b.dataset.task] = !s[+b.dataset.task]; setDay(s); } };
+$("#completeDay").onclick = () => setDay([true, true, true]);
+$("#resetDay").onclick = () => setDay([false, false, false]);
+
+/* ===== DASHBOARD ===== */
+function renderDashboard() {
+  const counts = DAYS.map((_, i) => progress[i + 1].filter(Boolean).length);
+  const total = counts.reduce((a, b) => a + b, 0), pct = Math.round(total / 21 * 100);
+  $("#bars").innerHTML = counts.map((n, i) =>
+    `<div class="bar"><span>${n}/3</span><div class="bar-track"><div class="bar-fill" style="height:${n / 3 * 100}%"></div></div><span>H${i + 1}</span></div>`).join("");
+  $("#pct").textContent = pct + "%";
+  $("#ringVal").style.strokeDashoffset = 220 - 220 * pct / 100;
+  $("#daysDone").textContent = `${counts.filter(n => n === 3).length} dari 7 hari selesai`;
+  $("#tasksDone").textContent = `${total} dari 21 tugas selesai`;
+}
+
+/* ===== TES FOMO ===== */
+$("#survey").innerHTML = SURVEY.map(([q, ...opts], i) =>
+  `<div class="q"><label for="q${i}">${i + 1}. ${q}</label><select class="field" id="q${i}">${opts.map((o, v) => `<option value="${v + 1}">${o}</option>`).join("")}</select></div>`).join("");
+
+$("#calc").onclick = () => {
+  const score = SURVEY.reduce((sum, _, i) => sum + +$("#q" + i).value, 0);
+  const pct = Math.round((score - 5) / 10 * 100);
+  let level = "FOMO Rendah", color = "--ok", advice = "<strong>Keren banget!</strong> Kamu punya kontrol diri mantap terhadap tren medsos.";
+  if (pct >= 70) { level = "FOMO Tinggi"; color = "--bad"; advice = "<strong>Perlu perhatian!</strong> Kamu sangat terpengaruh tren. Yuk ikuti Tantangan 7 Hari!"; }
+  else if (pct >= 35) { level = "FOMO Sedang"; color = "--warn"; advice = "<strong>Waspada!</strong> Terapkan jeda sebelum ikut hal viral."; }
+  $("#result").hidden = false;
+  $("#piePct").textContent = pct + "%";
+  $("#pieLevel").textContent = level;
+  $("#pieLevel").style.color = `var(${color})`;
+  $("#advice").innerHTML = advice;
+  $("#pie").style.background = `conic-gradient(var(${color}) 0 ${pct}%, var(--empty) ${pct}% 100%)`;
+};
+
+/* ===== KUTIPAN ===== */
+let quote = QUOTES[0];
+const showQuote = () => { $("#quote").textContent = `“${quote}”`; };
+const saveFavs = () => save("lessfomo_quotes", favorites);
+
+function renderFavorites() {
+  $("#favorites").innerHTML = favorites.map((q, i) =>
+    `<div class="list-item"><span>${esc(q)}</span><button class="icon-btn" data-del="${i}" aria-label="Hapus kutipan">✕</button></div>`).join("");
+}
+
+$("#nextQuote").onclick = () => { quote = QUOTES[Math.floor(Math.random() * QUOTES.length)]; showQuote(); };
+$("#copyQuote").onclick = () => navigator.clipboard.writeText(quote).then(() => alert("Kutipan disalin!"));
+$("#saveQuote").onclick = () => { if (!favorites.includes(quote)) { favorites.push(quote); saveFavs(); renderFavorites(); } };
+$("#favorites").onclick = e => { const b = e.target.closest("[data-del]"); if (b) { favorites.splice(+b.dataset.del, 1); saveFavs(); renderFavorites(); } };
+
+/* ===== PENGINGAT ===== */
+const saveReminders = () => save("lessfomo_reminders", reminders);
+
+function renderReminders() {
+  $("#reminders").innerHTML = reminders.map(r =>
+    `<div class="list-item"><b>${esc(r.time)} — ${esc(r.label)}</b><button class="icon-btn" data-del="${r.id}" aria-label="Hapus pengingat">✕</button></div>`).join("");
+}
+
+$("#addRem").onclick = () => {
+  const time = $("#remTime").value;
+  if (!time) return;
+  reminders.push({ id: Date.now(), time, label: $("#remLabel").value.trim() || "Pengingat", active: true });
+  $("#remLabel").value = "";
+  saveReminders(); renderReminders();
+};
+$("#reminders").onclick = e => { const b = e.target.closest("[data-del]"); if (b) { reminders = reminders.filter(r => r.id !== +b.dataset.del); saveReminders(); renderReminders(); } };
+
+let lastFired = "";
+setInterval(() => {
+  const d = new Date(), now = `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+  reminders.filter(r => r.active && r.time === now).forEach(r => {
+    const key = now + r.id;
+    if (lastFired !== key) { lastFired = key; alert(`⏰ PENGINGAT:\n${r.label}`); }
+  });
+}, 1000);
+
+/* ===== GAME ===== */
+const sizeCanvas = c => { c.width = c.clientWidth; c.height = 200; };
+let catchTimer = 0, runTimer = 0, jump = () => {};
+const stopCatch = () => { clearInterval(catchTimer); catchTimer = 0; };
+const stopRun = () => { clearInterval(runTimer); runTimer = 0; };
+
+function startCatch() {
+  stopCatch();
+  const c = $("#catchCanvas"), g = c.getContext("2d"), color = cssVar("--accent");
+  sizeCanvas(c);
+  const BW = 60, BY = c.height - 18, s = { x: c.width / 2 - BW / 2, items: [], score: 0, lives: 5 };
+  const hud = () => { $("#catchLives").textContent = hearts(s.lives); $("#catchScore").textContent = s.score; };
+  c.onpointermove = e => { s.x = Math.max(0, Math.min(c.width - BW, e.clientX - c.getBoundingClientRect().left - BW / 2)); };
+  hud();
+  catchTimer = setInterval(() => {
+    g.clearRect(0, 0, c.width, c.height);
+    g.fillStyle = color; g.fillRect(s.x, BY, BW, 10);
+    g.font = "16px sans-serif";
+    if (Math.random() < 0.04) s.items.push({ x: Math.random() * (c.width - 20) + 10, y: 0, star: Math.random() > 0.4, v: 2 + Math.random() * 2 });
+    for (let i = s.items.length - 1; i >= 0; i--) {
+      const it = s.items[i];
+      it.y += it.v;
+      g.fillText(it.star ? "⭐" : "📱", it.x - 8, it.y);
+      if (it.y >= BY && it.x >= s.x && it.x <= s.x + BW) {
+        if (it.star) s.score += 10; else s.lives--;
+        s.items.splice(i, 1); hud();
+        if (s.lives <= 0) { stopCatch(); alert("Game Over! Kamu terlalu banyak menyentuh Medsos 📱"); return; }
+      } else if (it.y > c.height) s.items.splice(i, 1);
+    }
+  }, 1000 / 60);
+}
+
+function startRun() {
+  stopRun();
+  const c = $("#runnerCanvas"), g = c.getContext("2d"), line = cssVar("--sub"), icons = ["📱", "🛍️", "🍔", "👗", "💎"];
+  sizeCanvas(c);
+  const floor = c.height - 42, p = { y: floor, vy: 0, air: false }, obs = [];
+  let score = 0, lives = 5;
+  const hud = () => { $("#runLives").textContent = hearts(lives); $("#runScore").textContent = score; };
+  jump = () => { if (!p.air) { p.vy = -11; p.air = true; } };
+  c.onpointerdown = jump;
+  hud();
+  runTimer = setInterval(() => {
+    g.clearRect(0, 0, c.width, c.height);
+    g.strokeStyle = line; g.beginPath(); g.moveTo(0, c.height - 10); g.lineTo(c.width, c.height - 10); g.stroke();
+    p.y += p.vy; p.vy += 0.6;
+    if (p.y >= floor) { p.y = floor; p.air = false; }
+    g.font = "26px sans-serif";
+    g.fillText("🏃", 30, p.y + 24);
+    if (Math.random() < 0.02 && (!obs.length || obs[obs.length - 1].x < c.width - 120)) obs.push({ x: c.width, y: c.height - 35, icon: icons[Math.floor(Math.random() * icons.length)] });
+    for (let i = obs.length - 1; i >= 0; i--) {
+      const o = obs[i];
+      o.x -= 3.5;
+      g.fillText(o.icon, o.x, o.y + 20);
+      if (Math.abs(o.x - 30) < 20 && Math.abs(o.y - p.y) < 20) {
+        lives--; obs.splice(i, 1); hud();
+        if (lives <= 0) { stopRun(); alert("Game Over! Kamu menabrak barang-barang pemicu FOMO 🛍️"); return; }
+      } else if (o.x < -20) { score += 5; obs.splice(i, 1); hud(); }
+    }
+  }, 1000 / 60);
+}
+
+$("#playCatch").onclick = startCatch;
+$("#playRun").onclick = startRun;
+addEventListener("keydown", e => { if (e.code === "Space" && runTimer) { e.preventDefault(); jump(); } });
+
+/* ===== AUDIO RELAKSASI (Web Audio, tanpa file) ===== */
+let actx = null, stops = [];
+
+function playAudio(type) {
+  stopAudio();
+  actx = new (window.AudioContext || window.webkitAudioContext)();
+  $("#s-" + type)?.classList.add("active");
+  const tick = (ms, fn) => { const t = setInterval(() => actx && fn(actx.currentTime), ms); stops.push(() => clearInterval(t)); };
+  const tone = (t, dur, vol, setup) => {
+    const o = actx.createOscillator(), g = actx.createGain();
+    setup(o, t);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + dur);
+  };
+
+  if (type === "waves" || type === "wind") {
+    const buf = actx.createBuffer(1, actx.sampleRate * 2, actx.sampleRate), data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+    const src = actx.createBufferSource(), filter = actx.createBiquadFilter(), gain = actx.createGain();
+    src.buffer = buf; src.loop = true;
+    filter.type = "lowpass"; filter.frequency.value = type === "waves" ? 300 : 600;
+    gain.gain.value = 0.1;
+    src.connect(filter); filter.connect(gain); gain.connect(actx.destination); src.start();
+    stops.push(() => src.stop());
+  } else if (type === "birds") {
+    tick(1000, t => tone(t, 0.1, 0.05, (o, t0) => { o.frequency.setValueAtTime(2000 + Math.random() * 1000, t0); o.frequency.exponentialRampToValueAtTime(3000, t0 + 0.1); }));
+  } else if (type === "crickets") {
+    tick(200, t => tone(t, 0.08, 0.05, o => { o.frequency.value = 4500; }));
+  } else {
+    const notes = type === "egypt" ? [220, 233, 277, 293, 329, 349] : [432, 528];
+    tick(type === "egypt" ? 800 : 3000, t => tone(t, 1.2, 0.08, o => { o.frequency.value = notes[Math.floor(Math.random() * notes.length)]; }));
+  }
+}
+
+function stopAudio() {
+  stops.forEach(fn => { try { fn(); } catch {} });
+  stops = [];
+  if (actx) { actx.close(); actx = null; }
+  $$(".sound").forEach(b => b.classList.remove("active"));
+}
+
+$("#sounds").innerHTML = SOUNDS.map(([id, label]) => `<button class="sound" id="s-${id}" data-sound="${id}">${label}</button>`).join("");
+$("#sounds").onclick = e => { const b = e.target.closest("[data-sound]"); if (b) playAudio(b.dataset.sound); };
+$("#stopSound").onclick = stopAudio;
+
+/* ===== INIT ===== */
+renderDays(); renderDay(); renderDashboard();
+showQuote(); renderFavorites(); renderReminders();
+</script>
+</body>
+</html>
